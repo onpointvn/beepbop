@@ -35,7 +35,7 @@ defmodule BeepBop.MixProject do
       {:excoveralls, "~> 0.7", only: :test},
       {:ecto, "~> 3.0"},
       {:ecto_sql, "~> 3.1"},
-      {:postgrex, "~> 0.15.3"},
+      {:postgrex, "~> 0.0"},
       {:ex_doc, "~> 0.18", only: :dev, runtime: false}
     ]
   end
