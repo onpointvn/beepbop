@@ -35,7 +35,7 @@ defmodule BeepBop.Utils do
   end
 
   def assert_schema!(schema, column) do
-    if Code.ensure_compiled?(schema) do
+    if Code.ensure_loaded?(schema) do
       unless function_exported?(schema, :__schema__, 1) do
         raise("#{inspect(schema)} #{@msg_not_a_struct}")
       end

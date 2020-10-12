@@ -281,6 +281,47 @@ defmodule BeepBop do
           false
         end
       end
+
+      def has_transition?(from_state, to_state) do
+        length(get_transition(from_state, to_state)) > 0
+      end
+
+      defp get_transition(from_state, to_state) do
+        @transitions
+        |> Enum.filter(fn {event, %{from: from, to: to}} ->
+          from_state in from and to_state == to
+        end)
+      end
+
+      def transition_state(context, to_state) do
+        if valid_context?(context) do
+          state =
+            case Map.fetch(context.struct, @beepbop_column) do
+              :error ->
+                nil
+
+              {:ok, something} when is_binary(something) ->
+                String.to_atom(something)
+
+              {:ok, something} when is_atom(something) ->
+                something
+
+              {:ok, nil} ->
+                nil
+            end
+
+          transitions = get_transition(state, to_state)
+
+          if length(transitions) == 1 do
+            [{event, _}] = transitions
+            apply(__MODULE__, event, [context])
+          else
+            struct(context, errors: {:error, "more than 1 valid event"}, valid?: false)
+          end
+        else
+          struct(context, errors: {:error, "cannot transition, bad context"}, valid?: false)
+        end
+      end
     end
   end
 end

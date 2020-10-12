@@ -8,7 +8,7 @@ defmodule BeepBop.Example.OrderMachineTest do
   alias BeepBop.Example.OrderMachine, as: Machine
 
   @states ~w[cart address payment shipping shipped cancelled]a
-  @events ~w[will_fail foobar]a
+  @events [:will_fail, :add_more_item, :payment, :set_address, :foobar]
 
   test "metadata" do
     assert Machine.__beepbop__(:module) == BeepBop.Example.Order
@@ -70,5 +70,33 @@ defmodule BeepBop.Example.OrderMachineTest do
                |> Context.new()
                |> Machine.will_fail()
     end
+
+    test "transition state with correct context" do
+      assert %Context{
+               valid?: true
+             } =
+               %Order{state: "cart"}
+               |> Context.new()
+               |> Machine.transition_state(:address)
+    end
+
+    test "cannot transition state with correct context" do
+      assert %Context{
+               valid?: false
+             } =
+               %Order{state: "cart"}
+               |> Context.new()
+               |> Machine.transition_state(:payment)
+    end
+  end
+
+  test "check state transition exist" do
+    assert Machine.has_transition?(:cart, :address)
+    assert Machine.has_transition?(:address, :payment)
+  end
+
+  test "check state transition not exist" do
+    assert not Machine.has_transition?(:cart, :payment)
+    assert not Machine.has_transition?(:address, :shipping)
   end
 end

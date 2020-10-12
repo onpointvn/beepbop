@@ -17,6 +17,21 @@ defmodule BeepBop.Example.OrderMachine do
       context
     end)
 
+    event(:set_address, %{from: [:cart], to: :address}, fn context ->
+      s = struct(context.struct, state: :address)
+      context
+    end)
+
+    event(:payment, %{from: [:address], to: :payment}, fn context ->
+      s = struct(context.struct, state: :payment)
+      context
+    end)
+
+    event(:add_more_item, %{from: [:address, :payment], to: :cart}, fn context ->
+      s = struct(context.struct, state: :cart)
+      context
+    end)
+
     event(:will_fail, %{from: [:cart], to: :cancelled}, fn context ->
       multi =
         Ecto.Multi.new()
