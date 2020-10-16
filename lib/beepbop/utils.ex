@@ -35,16 +35,18 @@ defmodule BeepBop.Utils do
   end
 
   def assert_schema!(schema, column) do
-    if Code.ensure_loaded?(schema) do
-      unless function_exported?(schema, :__schema__, 1) do
-        raise("#{inspect(schema)} #{@msg_not_a_struct}")
-      end
+    case Code.ensure_compiled(schema) do
+      {:module, _} ->
+        unless function_exported?(schema, :__schema__, 1) do
+          raise("#{inspect(schema)} #{@msg_not_a_struct}")
+        end
 
-      unless column in schema.__schema__(:fields) do
-        raise("#{inspect(schema)} #{@msg_missing_column} #{inspect(column)}")
-      end
-    else
-      raise("#{inspect(schema)} #{@msg_not_loaded}")
+        unless column in schema.__schema__(:fields) do
+          raise("#{inspect(schema)} #{@msg_missing_column} #{inspect(column)}")
+        end
+
+      {:error, reason} ->
+        raise("#{inspect(schema)} #{@msg_not_loaded}. Reason: #{inspect(reason)}")
     end
   end
 

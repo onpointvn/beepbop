@@ -72,7 +72,7 @@ defmodule BeepBop.UtilsTest do
       end
     )
 
-    assert_raise(RuntimeError, "FooBar #{@msg_not_loaded}", fn ->
+    assert_raise(RuntimeError, "FooBar #{@msg_not_loaded}. Reason: :nofile", fn ->
       Utils.assert_schema!(FooBar, :foobar)
     end)
   end
