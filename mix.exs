@@ -4,7 +4,7 @@ defmodule BeepBop.MixProject do
   def project do
     [
       app: :beepbop,
-      version: "0.0.1",
+      version: "0.1",
       elixir: ">= 1.5.3",
       description: description(),
       start_permanent: Mix.env() == :prod,
